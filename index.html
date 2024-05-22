@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task_1</title>
+</head>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        input {
+            padding: 5px;
+            width: 100%;
+        }
+
+        p {
+            color: red;
+            font-size: 12px;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        img {
+            max-width: 100%;
+            margin-bottom: 50px;
+        }
+    </style>
+<body>
+    <div class="wrapper">
+        <h1>A. Стрельба из пушки</h1>
+
+        <form action="#">
+            <label for="d_numb">Введите расстояние от пушки до энергетического щита d: <input type="text" id="d_numb"></label>
+            <label for="h_numb">Введите высоту дома h: <input type="text" id="h_numb"></label>
+            <label for="w_numb">Введите высоту энергетического щита w: <input type="text" id="w_numb"></label>
+            <label for="k_numb">Введите длину выстрела пучка энергетического щита k: <input type="text" id="k_numb"></label>
+            <button type="button" onClick="pushka()">Результат</button>
+            <a href="#" onclick="location.reload(); return false;">Сброс данных</a>
+        </form>
+
+        <p>
+            Введите данные согласно условию:<br> 
+            (1 ⩽ d, h, k ⩽ 10^9) <br>
+            (0 ⩽ w ⩽ 10^9)<br>
+            Входные данные не должны относиться к строчным типам данных!!!
+        </p>
+
+        <h2>Результат</h2>
+
+        <div class="result"></div>
+        <div class="result_shot"></div>
+
+        <h2>Решение</h2>
+        <p><img src="img.png" alt="Решение"></p>
+    </div>
+
+<script>
+
+    function pushka() {
+        //Опрееляем переменные
+        let d, h, w, k;
+        let arr;
+
+        //Вытаскиваем поля input
+        d = document.getElementById("d_numb");
+        h = document.getElementById("h_numb");
+        w = document.getElementById("w_numb");
+        k = document.getElementById("k_numb");
+
+        //Условие для d, h, k
+        arr = [d.value, h.value, k.value];
+        for(let i = 0; i < arr.length; i++) {
+            if(arr[i] < 1 || arr[i] > Math.pow(10, 9) || isNaN(arr[i])) {
+                if(i == 0) {
+                    alert("Введите правильно параметр d");
+                }
+                else if(i == 1) {
+                    alert("Введите правильно параметр h");
+                }
+                else if(i == 3) {
+                    alert("Введите правильно параметр k");
+                }
+                window.location.reload();    
+            }
+        }
+
+        //Условие для w
+        if(w.value < 0 || w.value > Math.pow(10, 9) || isNaN(w.value)) {
+            alert("Введите првильно параметр w");
+            window.location.reload();
+        }
+
+        //Вытаскиваем элемент result, в нем будет храниться результат минимального угла под которым нужно стрелять
+        result_str = document.querySelector(".result");
+
+        //Вытаскиваем элемент result_shot, в нем будет храниться результат угла для выстрела в землю
+        result_str_shot = document.querySelector(".result_shot");
+
+
+        let result_radian_shot;
+
+        //Определяем угол вектора (0,0) и щитом (d, w).
+        shield_radian = Math.atan(w.value/d.value);
+        shield_degree = (shield_radian * 180) / Math.PI;
+        //Проверка на то, сможет ли пушка достать до цели. Зная угол и длину вектора можно найти коррдинату конечной точки X вектора
+        //и если эта координа будет меньше чем 2d, то достать до цели невозможно
+        x = k.value * Math.cos(shield_radian);
+        //Пропишем условие
+        if(x < 2*d.value) {
+            result_str.innerHTML = -1;
+            result_str_shot.innerHTML = "Цель невозможно поразить!!!";
+        } 
+        else {
+            if(2*w.value <= h.value) {
+                result_radian = Math.atan(w.value/d.value);
+                result_str.innerHTML = "Попадание!!! Минимальный угол попадания в цель: " + ((result_radian * 180) / Math.PI).toFixed(4);
+            } 
+            else if (2*w.value > h.value) {
+                result_radian = Math.atan(w.value/d.value);
+                result_str.innerHTML = "Попадание!!! Минимальный угол попадания в цель: " + ((result_radian * 180) / Math.PI).toFixed(4);
+                degree_of_shot = 90 - ((result_radian * 180) / Math.PI);
+                result_str_shot.innerHTML ="Угол выстрела вниз:  " + degree_of_shot.toFixed(4);
+            }
+        }
+    }
+
+</script>
+    
+</body>
+</html>
